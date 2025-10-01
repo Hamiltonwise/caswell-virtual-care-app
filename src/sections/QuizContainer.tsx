@@ -148,7 +148,7 @@ export default function QuizContainer({
     setIsLoading(true);
 
     // File upload start
-    const fileUploadIndices = [10, 11, 12, 13, 14];
+    const fileUploadIndices = [6];
     let finalAnswers = answers;
 
     const endpoint =

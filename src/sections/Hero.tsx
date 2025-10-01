@@ -38,7 +38,7 @@ export default function Hero({
           <FontAwesomeIcon icon={faComment} /> 2. Answer A Few Questions
         </p>
         <p className="text-text font-light leading-10">
-          <FontAwesomeIcon icon={faTooth} /> 3. Snap 5 Pics of Your Teeth
+          <FontAwesomeIcon icon={faTooth} /> 3. Snap 1 Pic of Your Teeth
         </p>
       </div>
 
