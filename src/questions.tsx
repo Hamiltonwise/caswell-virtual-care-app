@@ -78,11 +78,13 @@ export const questions: QuestionItemType[] = [
 
   // 4 & 5) Photos: single, optional step (no multi-step)
   {
-    question: "Optional: Upload teeth photos to speed up your virtual consult",
+    question:
+      "Optional: Upload up to 5 teeth photos to speed up your virtual consult",
     subtext:
-      "Optional, but recommended — sharing photos now helps us maximize your consultation time. You can skip this and bring photos later.",
+      "Uploading photos now helps us maximize your consultation time — but it's completely optional. You may upload up to 5 photos or simply skip this step and continue. You can upload 1-5 photos and still skip to the next step anytime.",
     htmlContent: (
       <div className="flex gap-2 flex-wrap">
+        <p>Image for reference:</p>
         {/* example reference thumbnails, purely visual */}
         <img
           className="rounded-md w-[100%]"
@@ -92,7 +94,7 @@ export const questions: QuestionItemType[] = [
         {/* add more example images if you have them */}
       </div>
     ),
-    type: "imageinput",
+    type: "multiimageinput",
     multiple: true, // single page that accepts multiple images
   },
 ];

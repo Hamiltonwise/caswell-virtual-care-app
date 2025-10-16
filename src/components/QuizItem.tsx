@@ -11,12 +11,13 @@ import {
 import Button from "./Button";
 import Instruction from "./Instruction";
 import ImageInput from "./ImageInput";
+import MultiImageInput from "./MultiImageInput";
 
 type QuizItemProps = {
   question: string;
   choices?: Choices;
   isBlurred: boolean;
-  selectedItem?: string | File;
+  selectedItem?: string | File | File[];
   isChecked: boolean;
   id: number;
   inline?: boolean;
@@ -26,7 +27,7 @@ type QuizItemProps = {
   onValueConfirmed: (
     id: number,
     question: string,
-    value: string | File
+    value: string | File | File[]
   ) => void;
   focused: boolean;
   multiple: boolean;
@@ -173,6 +174,18 @@ export default function QuizItem({
         )}
         {itemType === "imageinput" && (
           <ImageInput
+            isBlurred={isBlurred}
+            question={question}
+            id={id.toString()}
+            subtext={subtext}
+            htmlContent={htmlContent}
+            onValueConfirmed={(id, question, value) =>
+              onValueConfirmed(id, question, value)
+            }
+          />
+        )}
+        {itemType === "multiimageinput" && (
+          <MultiImageInput
             isBlurred={isBlurred}
             question={question}
             id={id.toString()}

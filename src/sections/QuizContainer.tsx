@@ -27,7 +27,7 @@ export default function QuizContainer({
   const [answers, setAnswers] = useState<{
     [id: number]: {
       question: string;
-      value: string | File;
+      value: string | File | File[];
       type?: string;
     };
   }>({});
@@ -64,7 +64,7 @@ export default function QuizContainer({
   async function handleValueConfirmed(
     id: number,
     question: string,
-    value: string | File
+    value: string | File | File[]
   ): Promise<void> {
     setAnswers({ ...answers, [id]: { question, value } });
     if (id === currentItem) {
@@ -155,49 +155,120 @@ export default function QuizContainer({
       "https://caswellorthodontics.com/wp-json/dqp/v1/upload-photo";
     const formData = new FormData();
 
-    for (const index of fileUploadIndices) {
-      const file = answers[index].value as File;
+    // Check if we have any files to upload
+    const hasFiles =
+      answers[6] &&
+      ((Array.isArray(answers[6].value) && answers[6].value.length > 0) ||
+        (!Array.isArray(answers[6].value) && answers[6].value instanceof File));
 
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error(`File "${file.name}" exceeds 10MB.`);
-        setIsLoading(false);
-        return;
+    if (hasFiles) {
+      for (const index of fileUploadIndices) {
+        const value = answers[index].value;
+
+        // Handle File[] (multi-image input)
+        if (Array.isArray(value)) {
+          const files = value as File[];
+
+          for (const file of files) {
+            if (file.size > 10 * 1024 * 1024) {
+              toast.error(`File "${file.name}" exceeds 10MB.`);
+              setIsLoading(false);
+              return;
+            }
+
+            try {
+              const jpgFile = await convertAndCompressImage(file);
+              formData.append("files[]", jpgFile);
+            } catch (err) {
+              toast.error(`Error processing ${file.name}`);
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+        // Handle single File (legacy imageinput)
+        else if (value instanceof File) {
+          const file = value as File;
+
+          if (file.size > 10 * 1024 * 1024) {
+            toast.error(`File "${file.name}" exceeds 10MB.`);
+            setIsLoading(false);
+            return;
+          }
+
+          try {
+            const jpgFile = await convertAndCompressImage(file);
+            formData.append("files[]", jpgFile);
+          } catch (err) {
+            toast.error(`Error processing ${file.name}`);
+            setIsLoading(false);
+            return;
+          }
+        }
       }
 
       try {
-        const jpgFile = await convertAndCompressImage(file);
-        formData.append("files[]", jpgFile);
-      } catch (err) {
-        toast.error(`Error processing ${file.name}`);
-        setIsLoading(false);
-        return;
-      }
-    }
-
-    try {
-      const response = await axios.post(endpoint, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.data.urls.length) {
-        let updatedAnswers = answers;
-        response.data.urls.forEach((url: string, index: number) => {
-          updatedAnswers = {
-            ...updatedAnswers,
-            [fileUploadIndices[index]]: {
-              question: answers[fileUploadIndices[index]].question,
-              type: "image",
-              value: url,
-            },
-          };
+        const response = await axios.post(endpoint, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
 
-        finalAnswers = updatedAnswers;
+        if (response.data.urls.length) {
+          let updatedAnswers = answers;
+          let urlIndex = 0;
+
+          for (const index of fileUploadIndices) {
+            const value = answers[index].value;
+
+            // Handle multi-file uploads
+            if (Array.isArray(value)) {
+              const files = value as File[];
+              const fileCount = files.length;
+              const urls = response.data.urls.slice(
+                urlIndex,
+                urlIndex + fileCount
+              );
+
+              updatedAnswers = {
+                ...updatedAnswers,
+                [index]: {
+                  question: answers[index].question,
+                  type: "images", // Plural to indicate multiple
+                  value: urls.join(","), // Comma-separated URLs
+                },
+              };
+
+              urlIndex += fileCount;
+            }
+            // Handle single file uploads
+            else if (value instanceof File) {
+              updatedAnswers = {
+                ...updatedAnswers,
+                [index]: {
+                  question: answers[index].question,
+                  type: "image",
+                  value: response.data.urls[urlIndex++],
+                },
+              };
+            }
+          }
+
+          finalAnswers = updatedAnswers;
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      // No files uploaded - user skipped, create a placeholder entry
+      finalAnswers = {
+        ...answers,
+        [6]: {
+          question: answers[6].question,
+          type: "skipped",
+          value: "No photos uploaded",
+        },
+      };
     }
 
     // File upload end
