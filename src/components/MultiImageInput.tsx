@@ -53,9 +53,17 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
   ) => {
     const file = event.target.files?.[0];
 
+    console.log(
+      `[MultiImageInput] handleFileChange - index: ${index}, file:`,
+      file
+    );
+
     if (file) {
       // Validate file type
       if (!ALLOWED_TYPES.includes(file.type)) {
+        console.log(
+          `[MultiImageInput] File type validation failed: ${file.type}`
+        );
         toast.error(
           "Invalid file type. Please upload a PNG, JPG, JPEG, or HEIC image."
         );
@@ -64,6 +72,9 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
 
       // Validate file size
       if (file.size > MAX_FILE_SIZE) {
+        console.log(
+          `[MultiImageInput] File size validation failed: ${file.size} bytes`
+        );
         toast.error("File size must be less than 10MB.");
         return;
       }
@@ -71,6 +82,10 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
       // Update selected files
       const newSelectedFiles = [...selectedFiles];
       newSelectedFiles[index] = file;
+      console.log(
+        `[MultiImageInput] Setting selectedFiles at index ${index}:`,
+        newSelectedFiles
+      );
       setSelectedFiles(newSelectedFiles);
 
       // Generate preview
@@ -89,9 +104,23 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
   };
 
   const handleNext = () => {
+    console.log(
+      `[MultiImageInput] handleNext - selectedFiles state:`,
+      selectedFiles
+    );
+
     // Filter out null values to get only uploaded files
     const uploadedFiles = selectedFiles.filter(
       (file): file is File => file !== null
+    );
+
+    console.log(
+      `[MultiImageInput] handleNext - uploadedFiles after filter:`,
+      uploadedFiles
+    );
+    console.log(
+      `[MultiImageInput] handleNext - uploadedFiles.length:`,
+      uploadedFiles.length
     );
 
     if (uploadedFiles.length === 0) {
@@ -99,6 +128,11 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
       return;
     }
 
+    console.log(`[MultiImageInput] Calling onValueConfirmed with:`, {
+      id: parseInt(id),
+      question,
+      uploadedFiles,
+    });
     onValueConfirmed(parseInt(id), question, uploadedFiles);
   };
 

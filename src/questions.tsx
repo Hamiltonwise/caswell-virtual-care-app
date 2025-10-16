@@ -76,6 +76,15 @@ export const questions: QuestionItemType[] = [
     ],
   },
 
+  // General dentist question
+  {
+    question: "Who is your general dentist?",
+    type: "input",
+    placeholder: "Dentist's name or practice",
+    validation: "text",
+    subtext: "Optional. This helps us coordinate care if needed.",
+  },
+
   // 4 & 5) Photos: single, optional step (no multi-step)
   {
     question:

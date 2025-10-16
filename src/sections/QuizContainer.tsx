@@ -66,7 +66,19 @@ export default function QuizContainer({
     question: string,
     value: string | File | File[]
   ): Promise<void> {
+    console.log(`[QuizContainer] handleValueConfirmed called with:`, {
+      id,
+      question,
+      value,
+      valueType: Array.isArray(value) ? "File[]" : typeof value,
+      valueLength: Array.isArray(value) ? value.length : "N/A",
+    });
+
     setAnswers({ ...answers, [id]: { question, value } });
+    console.log(`[QuizContainer] Updated answers:`, {
+      ...answers,
+      [id]: { question, value },
+    });
     if (id === currentItem) {
       setCurrentItem(currentItem + 1);
 
@@ -145,10 +157,16 @@ export default function QuizContainer({
     if (!captchaToken) return toast.warn("Please complete captcha first.");
     if (!validateEmail()) return toast.warn("Please enter a valid email.");
 
+    console.log(`[QuizContainer] submitResults - Full answers state:`, answers);
+    console.log(
+      `[QuizContainer] submitResults - Answer [7] specifically:`,
+      answers[7]
+    );
+
     setIsLoading(true);
 
     // File upload start
-    const fileUploadIndices = [6];
+    const fileUploadIndices = [7];
     let finalAnswers = answers;
 
     const endpoint =
@@ -157,9 +175,9 @@ export default function QuizContainer({
 
     // Check if we have any files to upload
     const hasFiles =
-      answers[6] &&
-      ((Array.isArray(answers[6].value) && answers[6].value.length > 0) ||
-        (!Array.isArray(answers[6].value) && answers[6].value instanceof File));
+      answers[7] &&
+      ((Array.isArray(answers[7].value) && answers[7].value.length > 0) ||
+        (!Array.isArray(answers[7].value) && answers[7].value instanceof File));
 
     if (hasFiles) {
       for (const index of fileUploadIndices) {
@@ -263,8 +281,8 @@ export default function QuizContainer({
       // No files uploaded - user skipped, create a placeholder entry
       finalAnswers = {
         ...answers,
-        [6]: {
-          question: answers[6].question,
+        [7]: {
+          question: answers[7].question,
           type: "skipped",
           value: "No photos uploaded",
         },
