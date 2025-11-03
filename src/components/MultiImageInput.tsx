@@ -162,6 +162,7 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
       <div className="flex gap-[30px] max-md:flex-col-reverse  items-start w-full">
         <div className="flex flex-col w-full gap-4 flex-1">
           {/* Grid container for 5 upload slots */}
+          <p className="text-sm font-medium">Upload images:</p>
           <div className="grid grid-cols-2 gap-4">
             {/* First 4 slots in 2x2 grid */}
             {[0, 1, 2, 3].map((index) => (
@@ -246,7 +247,9 @@ const MultiImageInput: React.FC<MultiImageInputProps> = ({
         </div>
 
         {/* Reference image section */}
-        <div className="flex flex-col gap-2 items-center">{htmlContent}</div>
+        <div className="flex flex-col w-1/2 max-md:w-full gap-2 items-center">
+          {htmlContent}
+        </div>
       </div>
 
       {/* Buttons - both visible immediately */}

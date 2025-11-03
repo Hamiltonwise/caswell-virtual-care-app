@@ -92,15 +92,44 @@ export const questions: QuestionItemType[] = [
     subtext:
       "Uploading photos now helps us maximize your consultation time — but it's completely optional. You may upload up to 5 photos or simply skip this step and continue. You can upload 1-5 photos and still skip to the next step anytime.",
     htmlContent: (
-      <div className="flex gap-2 flex-wrap">
-        <p>Image for reference:</p>
-        {/* example reference thumbnails, purely visual */}
-        <img
-          className="rounded-md w-[100%]"
-          src="https://caswellorthodontics.com/wp-content/uploads/2025/03/t1.jpg"
-          alt="Front teeth example"
-        />
-        {/* add more example images if you have them */}
+      <div className="flex flex-col gap-3 w-full">
+        <p className="text-sm font-medium">Images for reference:</p>
+        {/* Grid container for reference images matching upload layout */}
+        <div className="flex flex-col gap-4">
+          {/* First 4 images in 2x2 grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <img
+              className="rounded-md w-full h-[200px] object-cover border-2 border-gray-200"
+              src="https://caswellorthodontics.com/wp-content/uploads/2025/03/t1.jpg"
+              alt="Reference example 1"
+            />
+            <img
+              className="rounded-md w-full h-[200px] object-cover border-2 border-gray-200"
+              src="https://caswellorthodontics.com/wp-content/uploads/2025/03/t2.jpg"
+              alt="Reference example 2"
+            />
+            <img
+              className="rounded-md w-full h-[200px] object-cover border-2 border-gray-200"
+              src="https://caswellorthodontics.com/wp-content/uploads/2025/03/t3.jpg"
+              alt="Reference example 3"
+            />
+            <img
+              className="rounded-md w-full h-[200px] object-cover border-2 border-gray-200"
+              src="https://caswellorthodontics.com/wp-content/uploads/2025/03/t4.jpg"
+              alt="Reference example 4"
+            />
+          </div>
+          {/* 5th image left-aligned below */}
+          <div className="flex justify-start">
+            <div className="w-[49%]">
+              <img
+                className="rounded-md w-full h-[200px] object-cover border-2 border-gray-200"
+                src="https://caswellorthodontics.com/wp-content/uploads/2025/03/t5.jpg"
+                alt="Reference example 5"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     ),
     type: "multiimageinput",
